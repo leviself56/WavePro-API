@@ -122,81 +122,69 @@ class WavePro {
 		return $json;
 	}
 
-	public function GetSFPs() {
+	public function GetDevice() {
+		$data = $this->query("GET", "/public/device");
+		if (!isset($data)) {
+			return false;
+		}
+		if (!empty($data)) {
+			return $data;
+		} else {
+			return false;
+		}
+	}
+
+	public function GetStatistics() {
 		$data = $this->query("GET", "/statistics");
 		if (!isset($data[0])) {
 			return false;
 		}
-		$sfp_data = array();
-		foreach ($data[0]['interfaces'] as $interface) {
-			if (isset($interface['statistics']['sfp'])) {
-				$sfp_data[$interface['id']]	=	$interface['statistics']['sfp'];
-			}
+		if (!empty($data[0])) {
+			return $data[0];
+		} else {
+			return false;
 		}
-		if (!empty($sfp_data)) {
-			return $sfp_data;
+	}
+
+	public function GetWirelessStatistics() {
+		$data = $this->query("GET", "/statistics");
+		if (!isset($data[0])) {
+			return false;
+		}
+		if (!empty($data[0])) {
+			$dataset = array(
+				"radios" 		=>	$data[0]['wireless']['radios'],
+				"linkQuality"	=>	$data[0]['wireless']['linkQuality'],
+				"orientation"	=>	$data[0]['device']['orientation']
+			);
+			return $dataset;
+		} else {
+			return false;
+		}
+	}
+
+	public function GetNeighbors() {
+		$data = $this->query("GET", "/tools/discovery/neighbors");
+		if (!isset($data[0])) {
+			return false;
+		}
+		if (!empty($data)) {
+			return $data;
 		} else {
 			return false;
 		}
 	}
 
 	public function GetInterfaces() {
-		$data = $this->query("GET", "/interfaces");
-		if (!isset($data[0])) {
-			return false;
-		}
-		$result = array();
-		$i = 0;
-		foreach ($data as $interface) {
-			$result[$i]['id']			=	$interface['identification']['id'];
-			$result[$i]['name']		=	$interface['identification']['name'];
-			$result[$i]['mac']		=	$interface['identification']['mac'];
-			$result[$i]['enabled']	=	$interface['status']['enabled'];
-			$result[$i]['plugged']	=	$interface['status']['plugged'];
-			$result[$i]['currentSpeed']=	$interface['status']['currentSpeed'];
-			$result[$i]['speed']		=	$interface['status']['speed'];
-			$result[$i]['mtu']		=	$interface['status']['mtu'];
-			$result[$i]['cableLength']=	$interface['status']['cableLength'];
-			if (isset($interface['port']['sfp'])) {
-				$result[$i]['sfp_present']	=	$interface['port']['sfp']['present'];
-				$result[$i]['sfp_vendor']	=	$interface['port']['sfp']['vendor'];
-				$result[$i]['sfp_serial']	=	$interface['port']['sfp']['serial'];
-				$result[$i]['sfp_txFault']	=	$interface['port']['sfp']['txFault'];
-				$result[$i]['sfp_los']		=	$interface['port']['sfp']['los'];
-			}
-			$i++;
-		}
-		if (!empty($result)) {
-			return $result;
-		} else {
-			return false;
-		}
-	}
-
-	public function GetSystemInfo() {
 		$data = $this->query("GET", "/statistics");
 		if (!isset($data[0])) {
 			return false;
 		}
-		$data1 = $this->query("GET", "/device");
-		if (!isset($data1['identification'])) {
+		if (!empty($data[0])) {
+			return $data[0]['interfaces'];
+		} else {
 			return false;
 		}
-		$result = array(
-			"cpu_usage"				=>	$data[0]['device']['cpu'][0]['usage'],
-			"cpu_temp"				=>	$data[0]['device']['cpu'][0]['temperature'],
-			"ram_usage"				=>	$data[0]['device']['ram']['usage'],
-			"ram_free"				=>	$data[0]['device']['ram']['free'],
-			"ram_total"				=>	$data[0]['device']['ram']['total'],
-			"fan_speed_1"			=>	$data[0]['device']['fanSpeeds'][0]['value'],
-			"fan_speed_2"			=>	$data[0]['device']['fanSpeeds'][1]['value'],
-			"uptime"				=>	$data[0]['device']['uptime'],
-			"device_mac"			=>	$data1['identification']['mac'],
-			"device_model"			=>	$data1['identification']['model'],
-			"device_firmware"		=>	$data1['identification']['firmwareVersion'],
-			"device_fallbackIp"		=>	$data1['capabilities']['device']['defaultFallbackAddress']
-		);
-		return $result;
 	}
 }
 ?>

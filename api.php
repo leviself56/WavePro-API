@@ -7,7 +7,7 @@ if (!isset($_POST)) {
     $error  =   json_encode(array(
         "error"         =>  array(
             "status"        =>  404,
-            "message"       =>  "EdgeOS REST API requires POST"
+            "message"       =>  "WavePro REST API requires POST"
     )), JSON_PRETTY_PRINT);
     http_response_code(404);
     print $error;
@@ -47,7 +47,7 @@ if (!isset($_POST['password'])) {
     die();
 }
 
-$EdgeOS = new EdgeOS($_POST['ip'], $_POST['username'], $_POST['password']);
+$WavePro = new WavePro($_POST['ip'], $_POST['username'], $_POST['password']);
 
 if (!isset($_POST['function'])) {
     $error  =   json_encode(array(
@@ -62,18 +62,26 @@ if (!isset($_POST['function'])) {
 
 
 switch ($_POST['function']) {
-    case "get.sfps":
-        print json_encode($EdgeOS->GetSFPs(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    case "get.interfaces":
+        print json_encode($WavePro->GetInterfaces(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        break;
+
+    case "get.device":
+        print json_encode($WavePro->GetDevice(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        break;
+
+    case "get.statistics":
+        print json_encode($WavePro->GetStatistics(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        break;
+
+    case "get.wireless.statistics":
+        print json_encode($WavePro->GetWirelessStatistics(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        break;
+
+    case "get.neighbors":
+        print json_encode($WavePro->GetNeighbors(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         break;
     
-    case "get.interfaces":
-        print json_encode($EdgeOS->GetInterfaces(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        break;
-
-    case "get.system.info":
-        print json_encode($EdgeOS->GetSystemInfo(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        break;
-
     default:
         $error = json_encode(array(
             "error"     =>  array(
