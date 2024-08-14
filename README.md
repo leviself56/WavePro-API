@@ -3,7 +3,7 @@
 
 Server will need access to the switch in the same subnet/vlan.
 The file `api.php` allows a remote server (like Zabbix) to query the switch and retrieve the datasets via HTTP POST.
-This code can be further expanded to include POST, PATCH or PUT to manipulate the remote switch.
+This code can be further expanded to include POST, PATCH or PUT to manipulate the remote device.
 
 Current functions:
 + `get.interfaces`
