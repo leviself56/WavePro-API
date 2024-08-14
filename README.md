@@ -25,7 +25,7 @@ Example usage:
   "ip": "10.15.100.170",
   "username": "ubnt",
   "password": "ubnt",
-  "function": "get.device"
+  "function": "get.wireless.statistics"
 }
 ```
 
