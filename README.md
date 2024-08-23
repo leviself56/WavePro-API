@@ -1,7 +1,7 @@
 # WavePro REST API
 ## Php code for querying statistics from Ubiquiti WavePro
 
-Server will need access to the switch in the same subnet/vlan.
+Server will need access to the device in the same subnet/vlan.
 The file `api.php` allows a remote server (like Zabbix) to query the switch and retrieve the datasets via HTTP POST.
 This code can be further expanded to include POST, PATCH or PUT to manipulate the remote device. A sample Zabbix template has been included to perform API requests to this RESTful API and provide dynamic items to monitor via the Zabbix software.
 
