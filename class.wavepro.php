@@ -186,5 +186,21 @@ class WavePro {
 			return false;
 		}
 	}
+
+	public function GetGPS() {
+		$data = $this->query("GET", "/statistics");
+		if (!isset($data[0])) {
+			return false;
+		}
+		if (!empty($data[0])) {
+			$dataset = array(
+				'gps'			=>	$data[0]['device']['gps'],
+				'orientation'	=>	$data[0]['device']['orientation']
+			);
+			return $dataset;
+		} else {
+			return false;
+		}
+	}
 }
 ?>

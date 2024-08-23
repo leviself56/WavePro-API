@@ -78,6 +78,10 @@ switch ($_POST['function']) {
         print json_encode($WavePro->GetWirelessStatistics(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         break;
 
+    case "get.gps":
+        print json_encode($WavePro->GetGPS(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        break;
+
     case "get.neighbors":
         print json_encode($WavePro->GetNeighbors(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         break;
