@@ -1,0 +1,992 @@
+{
+    "zabbix_export": {
+        "version": "6.4",
+        "template_groups": [
+            {
+                "uuid": "7df96b18c230490a9a0a9e2307226338",
+                "name": "Templates"
+            }
+        ],
+        "templates": [
+            {
+                "uuid": "795de03b10a14ff69a19574287b85906",
+                "template": "CT WavePro  API",
+                "name": "CT WavePro  API",
+                "groups": [
+                    {
+                        "name": "Templates"
+                    }
+                ],
+                "items": [
+                    {
+                        "uuid": "1204daecd5cf483da417d90efb6f962f",
+                        "name": "WaveAPI-device",
+                        "type": "SCRIPT",
+                        "key": "WaveAPI-device",
+                        "history": "0",
+                        "value_type": "TEXT",
+                        "params": "var obj = JSON.parse(value);\nvar list = {};\nvar apiReq = new HttpRequest(), apiResp, apiHeader;\n\nvar payload = {\n  application:\" \",\n  token:\" \",\n  url:\"/v2/WavePro/\",\n  method:\"POST\",\n  payload:{\n    ip:obj.HOST_IP,\n    username:obj.WAVEPRO_USER,\n    password:obj.WAVEPRO_PASS,\n    function:obj.API_FUNCT\n  }\n};\n\nfunction device(value, param) {\n  if (!list[param]) list[param] = {};\n  if (value.mac) list[param]['mac']               = value.mac;\n  if (value.mac) list[param]['model']             = value.model;\n  if (value.mac) list[param]['powerSource']       = value.regulatory.powerSource;\n  if (value.mac) list[param]['fccId']             = value.regulatory.fccId;\n  if (value.mac) list[param]['minSeparationDistance']= value.regulatory.minSeparationDistance;\n}\n\napiReq.addHeader('Content-Type: application/json');\napiResp = apiReq.post(obj.API_URL, JSON.stringify(payload));\napiHeader = apiReq.getHeaders(true);\n\nif (apiHeader) {\n  apiStats = JSON.parse(apiResp);\n\n  if (apiReq.getStatus() == 200) {\n      device(apiStats.identification, 0);\n      return JSON.stringify(list);\n  }\n}\nreturn '[]';",
+                        "timeout": "30s",
+                        "parameters": [
+                            {
+                                "name": "API_FUNCT",
+                                "value": "{$API_FUNCT_DEVICE}"
+                            },
+                            {
+                                "name": "API_URL",
+                                "value": "{$WAVEPRO_API_URL}"
+                            },
+                            {
+                                "name": "HOST_IP",
+                                "value": "{HOST.IP}"
+                            },
+                            {
+                                "name": "WAVEPRO_PASS",
+                                "value": "{$WAVEPRO_PASS}"
+                            },
+                            {
+                                "name": "WAVEPRO_USER",
+                                "value": "{$WAVEPRO_USER}"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "a1bdbe2e9a2648338e5a3c70eda25c34",
+                        "name": "WaveAPI-gps",
+                        "type": "SCRIPT",
+                        "key": "WaveAPI-gps",
+                        "history": "0",
+                        "value_type": "TEXT",
+                        "params": "var obj = JSON.parse(value);\nvar list = {};\nvar apiReq = new HttpRequest(), apiResp, apiHeader;\n\nvar payload = {\n  application:\" \",\n  token:\" \",\n  url:\"/v2/WavePro/\",\n  method:\"POST\",\n  payload:{\n    ip:obj.HOST_IP,\n    username:obj.WAVEPRO_USER,\n    password:obj.WAVEPRO_PASS,\n    function:obj.API_FUNCT\n  }\n};\n\napiReq.addHeader('Content-Type: application/json');\napiResp = apiReq.post(obj.API_URL, JSON.stringify(payload));\napiHeader = apiReq.getHeaders(true);\n\nif (apiHeader) {\n  apiStats = JSON.parse(apiResp);\n\n  if (apiReq.getStatus() == 200) {\n      return JSON.stringify(apiStats);\n  }\n}\nreturn '[]';",
+                        "timeout": "30s",
+                        "parameters": [
+                            {
+                                "name": "API_FUNCT",
+                                "value": "{$API_FUNCT_GPS}"
+                            },
+                            {
+                                "name": "API_URL",
+                                "value": "{$WAVEPRO_API_URL}"
+                            },
+                            {
+                                "name": "HOST_IP",
+                                "value": "{HOST.IP}"
+                            },
+                            {
+                                "name": "WAVEPRO_PASS",
+                                "value": "{$WAVEPRO_PASS}"
+                            },
+                            {
+                                "name": "WAVEPRO_USER",
+                                "value": "{$WAVEPRO_USER}"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "0a0dd4bd93f74aef875f4a686f4af05c",
+                        "name": "WaveAPI-interfaces",
+                        "type": "SCRIPT",
+                        "key": "WaveAPI-interfaces",
+                        "history": "0",
+                        "value_type": "TEXT",
+                        "params": "var obj = JSON.parse(value);\nvar list = {};\nvar list_array = [];\nvar apiReq = new HttpRequest(), apiResp, apiHeader;\n\nvar payload = {\n  application:\" \",\n  token:\" \",\n  url:\"/v2/WavePro/\",\n  method:\"POST\",\n  payload:{\n    ip:obj.HOST_IP,\n    username:obj.WAVEPRO_USER,\n    password:obj.WAVEPRO_PASS,\n    function:obj.API_FUNCT\n  }\n};\n\nfunction stats(value, param) {\n  if (!list[param]) list[param] = {};\n  if (value.id) list[param]['id']                = value.id;\n  if (value.id) list[param]['name']              = value.name;\n  if (value.id) list[param]['type']              = value.status.type;\n  if (value.id) list[param]['mtu']               = value.status.mtu;\n  if (value.id) list[param]['enabled']           = value.status.enabled;\n  if (value.id) list[param]['txBytes']           = value.statistics.txBytes;\n  if (value.id) list[param]['rxBytes']           = value.statistics.rxBytes;\n  if (value.id) list[param]['txRate']            = value.statistics.txRate;\n  if (value.id) list[param]['rxRate']            = value.statistics.rxRate;\n  if (value.id) list[param]['txPackets']         = value.statistics.txPackets;\n  if (value.id) list[param]['rxPackets']         = value.statistics.rxPackets;\n}\n\napiReq.addHeader('Content-Type: application/json');\napiResp = apiReq.post(obj.API_URL, JSON.stringify(payload));\napiHeader = apiReq.getHeaders(true);\n\nif (apiHeader) {\n  apiStats = JSON.parse(apiResp);\n  apiCountStats = apiStats.length;\n\n  if (apiReq.getStatus() == 200 && apiCountStats > 0) {\n    if (apiCountStats > 0) {\n      for (i = 0; i < apiCountStats; i++) stats(apiStats[i], i);\n      Object.keys(list).forEach(function(key) { list_array.push(list[key]); });\n      return JSON.stringify(list);\n    }\n  }\n}\nreturn '[]';",
+                        "timeout": "30s",
+                        "parameters": [
+                            {
+                                "name": "API_FUNCT",
+                                "value": "{$API_FUNCT_INTERFACES}"
+                            },
+                            {
+                                "name": "API_URL",
+                                "value": "{$WAVEPRO_API_URL}"
+                            },
+                            {
+                                "name": "HOST_IP",
+                                "value": "{HOST.IP}"
+                            },
+                            {
+                                "name": "WAVEPRO_PASS",
+                                "value": "{$WAVEPRO_PASS}"
+                            },
+                            {
+                                "name": "WAVEPRO_USER",
+                                "value": "{$WAVEPRO_USER}"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "6519bc7b8ad4426a95e59b25a7ccefec",
+                        "name": "WaveAPI-radios",
+                        "type": "SCRIPT",
+                        "key": "WaveAPI-radios",
+                        "history": "0",
+                        "value_type": "TEXT",
+                        "params": "var obj = JSON.parse(value);\nvar list = {};\nvar list_array = [];\nvar apiReq = new HttpRequest(), apiResp, apiHeader;\n\nvar payload = {\n  application:\" \",\n  token:\" \",\n  url:\"/v2/WavePro/\",\n  method:\"POST\",\n  payload:{\n    ip:obj.HOST_IP,\n    username:obj.WAVEPRO_USER,\n    password:obj.WAVEPRO_PASS,\n    function:obj.API_FUNCT\n  }\n};\n\nfunction stats(value, param) {\n  if (!list[param]) list[param] = {};\n  if (value.id) list[param]['id']                = value.id;\n  if (value.id) list[param]['serviceUptime']     = value.serviceUptime;\n  if (value.id) list[param]['serviceDowntime']   = value.serviceDowntime;\n  if (value.id) list[param]['linkState']         = value.linkState;\n  if (value.id) list[param]['frequency']         = value.frequency.center;\n  if (value.id) list[param]['capacityUl']        = value.linkQuality.capacity.ul;\n  if (value.id) list[param]['capacityDl']        = value.linkQuality.capacity.dl;\n}\n\napiReq.addHeader('Content-Type: application/json');\napiResp = apiReq.post(obj.API_URL, JSON.stringify(payload));\napiHeader = apiReq.getHeaders(true);\n\nif (apiHeader) {\n  apiStats = JSON.parse(apiResp);\n  apiCountStats = apiStats.radios.length;\n\n  if (apiReq.getStatus() == 200 && apiCountStats > 0) {\n    if (apiCountStats > 0) {\n      for (i = 0; i < apiCountStats; i++) stats(apiStats.radios[i], i);\n      Object.keys(list).forEach(function(key) { list_array.push(list[key]); });\n      return JSON.stringify(list);\n    }\n  }\n}\nreturn '[]';",
+                        "timeout": "30s",
+                        "parameters": [
+                            {
+                                "name": "API_FUNCT",
+                                "value": "{$API_FUNCT_WSTATISTICS}"
+                            },
+                            {
+                                "name": "API_URL",
+                                "value": "{$WAVEPRO_API_URL}"
+                            },
+                            {
+                                "name": "HOST_IP",
+                                "value": "{HOST.IP}"
+                            },
+                            {
+                                "name": "WAVEPRO_PASS",
+                                "value": "{$WAVEPRO_PASS}"
+                            },
+                            {
+                                "name": "WAVEPRO_USER",
+                                "value": "{$WAVEPRO_USER}"
+                            }
+                        ]
+                    }
+                ],
+                "discovery_rules": [
+                    {
+                        "uuid": "65d5ce29c49f4f4895f2d4812c4eee3b",
+                        "name": "WavePro Device",
+                        "type": "DEPENDENT",
+                        "key": "WAVEDevice",
+                        "delay": "0",
+                        "description": "You may also consider using IF-MIB::ifType or IF-MIB::ifAlias for discovery depending on your filtering needs.\n\n{$SNMP_COMMUNITY} is a global macro.",
+                        "item_prototypes": [
+                            {
+                                "uuid": "0ef22592fca84af99da9bf841c1ef0b0",
+                                "name": "MAC Address",
+                                "type": "DEPENDENT",
+                                "key": "DeviceMAC[{#FCCID}]",
+                                "value_type": "TEXT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.0.mac"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-device"
+                                }
+                            },
+                            {
+                                "uuid": "1e70402a0af84ad9ad32904c74edea7c",
+                                "name": "Device Model",
+                                "type": "DEPENDENT",
+                                "key": "DeviceModel[{#FCCID}]",
+                                "value_type": "TEXT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.0.model"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-device"
+                                }
+                            },
+                            {
+                                "uuid": "aca2945e4ae840f6ae18b6c8198e70dd",
+                                "name": "Device Power Source",
+                                "type": "DEPENDENT",
+                                "key": "DevicePowerSrc[{#FCCID}]",
+                                "value_type": "TEXT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.0.powerSource"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-device"
+                                }
+                            },
+                            {
+                                "uuid": "4fb2f330c2e3408b92b25a320e5d51ac",
+                                "name": "Device Minimum Separation Distance",
+                                "type": "DEPENDENT",
+                                "key": "DeviceSeparation[{#FCCID}]",
+                                "history": "1d",
+                                "value_type": "FLOAT",
+                                "trends": "0",
+                                "units": "mm",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.0.minSeparationDistance"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-device"
+                                }
+                            },
+                            {
+                                "uuid": "767e40ec007041bba5f56e1c8bfe8999",
+                                "name": "Device FCC ID",
+                                "type": "DEPENDENT",
+                                "key": "Device[{#FCCID}]",
+                                "value_type": "TEXT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.0.fccId"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-device"
+                                }
+                            }
+                        ],
+                        "master_item": {
+                            "key": "WaveAPI-device"
+                        },
+                        "preprocessing": [
+                            {
+                                "type": "JAVASCRIPT",
+                                "parameters": [
+                                    "var obj = JSON.parse(value);\nvar keys = Object.keys(obj);\nvar len = keys.length;\nvar title;\n\nvar lld = [];\nfor (var i = 0; i < len; i++) {\n    title = obj[i]['id'];\n\n    lld.push({\n        '{#MAC}': obj[i]['mac'],\n        '{#MODEL}': obj[i]['model'],\n        '{#POWERSOURCE}': obj[i]['powerSource'],\n        '{#FCCID}': obj[i]['fccId'],\n        '{#MINSEPARATION}': obj[i]['minSeparationDistance']\n    });\n}\nreturn JSON.stringify(lld);"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "19716294a07d42f9a65b90ec3b2b84d7",
+                        "name": "WavePro GPS",
+                        "type": "DEPENDENT",
+                        "key": "WAVEGps",
+                        "delay": "0",
+                        "description": "You may also consider using IF-MIB::ifType or IF-MIB::ifAlias for discovery depending on your filtering needs.\n\n{$SNMP_COMMUNITY} is a global macro.",
+                        "item_prototypes": [
+                            {
+                                "uuid": "d3c7416d2f664f87a0bdde71d31092c7",
+                                "name": "GPS - Altitude",
+                                "type": "DEPENDENT",
+                                "key": "GPSalt[{#ID}]",
+                                "value_type": "FLOAT",
+                                "trends": "0",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.gps.alt"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-gps"
+                                }
+                            },
+                            {
+                                "uuid": "37450bad5ce14144b71a259550e89ddc",
+                                "name": "GPS - Latitude",
+                                "type": "DEPENDENT",
+                                "key": "GPSlat[{#ID}]",
+                                "value_type": "FLOAT",
+                                "trends": "0",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.gps.lat"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-gps"
+                                }
+                            },
+                            {
+                                "uuid": "de0c6be3990040bb85511d08cda8e608",
+                                "name": "GPS - Longitude",
+                                "type": "DEPENDENT",
+                                "key": "GPSlon[{#ID}]",
+                                "value_type": "FLOAT",
+                                "trends": "0",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.gps.lon"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-gps"
+                                }
+                            },
+                            {
+                                "uuid": "4212a0ea80f94f3086814002d2d5720c",
+                                "name": "GPS - Satelites",
+                                "type": "DEPENDENT",
+                                "key": "GPSsats[{#ID}]",
+                                "value_type": "FLOAT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.gps.sats"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-gps"
+                                }
+                            },
+                            {
+                                "uuid": "3bc65e08506a4df7b0d8e33533262dee",
+                                "name": "Orientation - Roll",
+                                "type": "DEPENDENT",
+                                "key": "ORroll[{#ID}]",
+                                "value_type": "FLOAT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.orientation.roll"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-gps"
+                                }
+                            },
+                            {
+                                "uuid": "5cb2c5c43f394e8ca48753853f337a01",
+                                "name": "Orientation - Tilt",
+                                "type": "DEPENDENT",
+                                "key": "ORtilt[{#ID}]",
+                                "value_type": "FLOAT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.orientation.tilt"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-gps"
+                                }
+                            }
+                        ],
+                        "graph_prototypes": [
+                            {
+                                "uuid": "9f31678136b946e29ba89c5c389a53e5",
+                                "name": "Alignment for [{#ID}]",
+                                "graph_items": [
+                                    {
+                                        "drawtype": "BOLD_LINE",
+                                        "color": "FF0000",
+                                        "calc_fnc": "ALL",
+                                        "item": {
+                                            "host": "CT WavePro  API",
+                                            "key": "ORroll[{#ID}]"
+                                        }
+                                    },
+                                    {
+                                        "sortorder": "1",
+                                        "drawtype": "BOLD_LINE",
+                                        "color": "0040FF",
+                                        "calc_fnc": "ALL",
+                                        "item": {
+                                            "host": "CT WavePro  API",
+                                            "key": "ORtilt[{#ID}]"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "WaveAPI-gps"
+                        },
+                        "preprocessing": [
+                            {
+                                "type": "JAVASCRIPT",
+                                "parameters": [
+                                    "var lld = [];\nlld.push({\n    '{#ID}': 'singleDeviceGPS'\n});\nreturn JSON.stringify(lld);"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "4c8234e205774edb8e3fe0358b37fc57",
+                        "name": "WavePro Interfaces",
+                        "type": "DEPENDENT",
+                        "key": "WAVEInterfaces",
+                        "delay": "0",
+                        "description": "You may also consider using IF-MIB::ifType or IF-MIB::ifAlias for discovery depending on your filtering needs.\n\n{$SNMP_COMMUNITY} is a global macro.",
+                        "item_prototypes": [
+                            {
+                                "uuid": "db53c2ca35f44a298233270325025674",
+                                "name": "{#ID} - {#NAME} MTU",
+                                "type": "DEPENDENT",
+                                "key": "Mtu[{#ID}]",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].mtu"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            },
+                            {
+                                "uuid": "27bcb0164b3148d3ae1b8f777b9ea0d5",
+                                "name": "{#ID} - {#NAME} RX Bytes",
+                                "type": "DEPENDENT",
+                                "key": "RxBytes[{#ID}]",
+                                "units": "B",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].rxBytes"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            },
+                            {
+                                "uuid": "74c3a1dcc3bc4ce299e91bafb5c725e7",
+                                "name": "{#ID} - {#NAME} RX Packets",
+                                "type": "DEPENDENT",
+                                "key": "RxPackets[{#ID}]",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].rxPackets"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            },
+                            {
+                                "uuid": "ebe68845dbac467a83b0895e47c11d35",
+                                "name": "{#ID} - {#NAME} RX Throughput",
+                                "type": "DEPENDENT",
+                                "key": "RxRate[{#ID}]",
+                                "units": "bps",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].rxRate"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            },
+                            {
+                                "uuid": "9149b2e921d24413bb9c2c9594a3261b",
+                                "name": "{#ID} - {#NAME} Status",
+                                "type": "DEPENDENT",
+                                "key": "Status[{#ID}]",
+                                "value_type": "TEXT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].enabled"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            },
+                            {
+                                "uuid": "734813a2be5040d197cf7b6e0a664e18",
+                                "name": "{#ID} - {#NAME} TX Bytes",
+                                "type": "DEPENDENT",
+                                "key": "TxBytes[{#ID}]",
+                                "units": "B",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].txBytes"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            },
+                            {
+                                "uuid": "6c850843f18242aebf0f9a4748284591",
+                                "name": "{#ID} - {#NAME} TX Packets",
+                                "type": "DEPENDENT",
+                                "key": "TxPackets[{#ID}]",
+                                "units": "kb",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].txPackets"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            },
+                            {
+                                "uuid": "7da9bd4e26c84d49a6bc135a1c206c85",
+                                "name": "{#ID} - {#NAME} TX Throughput",
+                                "type": "DEPENDENT",
+                                "key": "TxRate[{#ID}]",
+                                "units": "bps",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].txRate"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-interfaces"
+                                }
+                            }
+                        ],
+                        "graph_prototypes": [
+                            {
+                                "uuid": "e585191bb75d417fb7d9f850975cbaf1",
+                                "name": "{#ID} - {#NAME} Throughput",
+                                "show_work_period": "NO",
+                                "graph_items": [
+                                    {
+                                        "drawtype": "FILLED_REGION",
+                                        "color": "0040FF",
+                                        "calc_fnc": "ALL",
+                                        "item": {
+                                            "host": "CT WavePro  API",
+                                            "key": "RxRate[{#ID}]"
+                                        }
+                                    },
+                                    {
+                                        "sortorder": "1",
+                                        "drawtype": "FILLED_REGION",
+                                        "color": "F8BBD0",
+                                        "calc_fnc": "ALL",
+                                        "item": {
+                                            "host": "CT WavePro  API",
+                                            "key": "TxRate[{#ID}]"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "WaveAPI-interfaces"
+                        },
+                        "preprocessing": [
+                            {
+                                "type": "JAVASCRIPT",
+                                "parameters": [
+                                    "var obj = JSON.parse(value);\nvar keys = Object.keys(obj);\nvar len = keys.length;\nvar title;\n\nvar lld = [];\nfor (var i = 0; i < len; i++) {\n    title = obj[i]['id'];\n\n    lld.push({\n        '{#ID}': obj[i]['id'],\n        '{#NAME}': obj[i]['name'],\n        '{#TITLE}': title,\n        '{#TYPE}': obj[i]['type'],\n        '{#MTU}': obj[i]['mtu'],\n        '{#ENABLED}': obj[i]['enabled'],\n        '{#TXBYTES}': obj[i]['txBytes'],\n        '{#RXBYTES}': obj[i]['rxBytes'],\n        '{#TXRATE}': obj[i]['txRate'],\n        '{#RXRATE}': obj[i]['rxRate'],\n        '{#TXPACKETS}': obj[i]['txPackets'],\n        '{#RXPACKETS}': obj[i]['rxPackets']\n    });\n}\nreturn JSON.stringify(lld);"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "7ef4bbf6a380463996a23816f013ec5f",
+                        "name": "WavePro Wireless Radios",
+                        "type": "DEPENDENT",
+                        "key": "WAVERadios",
+                        "delay": "0",
+                        "description": "You may also consider using IF-MIB::ifType or IF-MIB::ifAlias for discovery depending on your filtering needs.\n\n{$SNMP_COMMUNITY} is a global macro.",
+                        "item_prototypes": [
+                            {
+                                "uuid": "ba0b5d99761b4817b1b1917a953383d8",
+                                "name": "Capacity UL on {#TITLE}",
+                                "type": "DEPENDENT",
+                                "key": "RadioCapacittyUL[{#ID}]",
+                                "value_type": "FLOAT",
+                                "units": "bps",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].capacityUl"
+                                        ]
+                                    },
+                                    {
+                                        "type": "MULTIPLIER",
+                                        "parameters": [
+                                            "1000"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-radios"
+                                }
+                            },
+                            {
+                                "uuid": "7e9ca184e20e40a69d1489792780801e",
+                                "name": "Capacity DL on {#TITLE}",
+                                "type": "DEPENDENT",
+                                "key": "RadioCapacityDL[{#ID}]",
+                                "value_type": "FLOAT",
+                                "units": "bps",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].capacityDl"
+                                        ]
+                                    },
+                                    {
+                                        "type": "MULTIPLIER",
+                                        "parameters": [
+                                            "1000"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-radios"
+                                }
+                            },
+                            {
+                                "uuid": "b9f29667a6e04d1fa8eb8dfd37a58a05",
+                                "name": "Frequency on {#TITLE}",
+                                "type": "DEPENDENT",
+                                "key": "RadioFreq[{#ID}]",
+                                "value_type": "FLOAT",
+                                "units": "Hz",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].frequency"
+                                        ]
+                                    },
+                                    {
+                                        "type": "MULTIPLIER",
+                                        "parameters": [
+                                            "1000000"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-radios"
+                                }
+                            },
+                            {
+                                "uuid": "6f40450e95264979a8b9291307e0e82f",
+                                "name": "Status on {#TITLE}",
+                                "type": "DEPENDENT",
+                                "key": "RadioStatus[{#ID}]",
+                                "value_type": "TEXT",
+                                "preprocessing": [
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[?(@.id=='{#ID}')]"
+                                        ]
+                                    },
+                                    {
+                                        "type": "JSONPATH",
+                                        "parameters": [
+                                            "$.[0].linkState"
+                                        ]
+                                    }
+                                ],
+                                "master_item": {
+                                    "key": "WaveAPI-radios"
+                                }
+                            }
+                        ],
+                        "graph_prototypes": [
+                            {
+                                "uuid": "d8151d8f8e834af48367afe1e0092934",
+                                "name": "Link Capacity for {#TITLE}",
+                                "graph_items": [
+                                    {
+                                        "drawtype": "FILLED_REGION",
+                                        "color": "0040FF",
+                                        "calc_fnc": "ALL",
+                                        "item": {
+                                            "host": "CT WavePro  API",
+                                            "key": "RadioCapacityDL[{#ID}]"
+                                        }
+                                    },
+                                    {
+                                        "sortorder": "1",
+                                        "drawtype": "FILLED_REGION",
+                                        "color": "F8BBD0",
+                                        "calc_fnc": "ALL",
+                                        "item": {
+                                            "host": "CT WavePro  API",
+                                            "key": "RadioCapacittyUL[{#ID}]"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "WaveAPI-radios"
+                        },
+                        "request_method": "POST",
+                        "preprocessing": [
+                            {
+                                "type": "JAVASCRIPT",
+                                "parameters": [
+                                    "var obj = JSON.parse(value);\nvar keys = Object.keys(obj);\nvar len = keys.length;\nvar title;\n\nvar lld = [];\nfor (var i = 0; i < len; i++) {\n    title = obj[i]['id'];\n\n    lld.push({\n        '{#ID}': obj[i]['id'],\n        '{#NAME}': obj[i]['name'],\n        '{#TITLE}': title,\n        '{#SERVICEUPTIME}': obj[i]['serviceUptime'],\n        '{#SERVICEDOWNTIME}': obj[i]['serviceDowntime'],\n        '{#LINKSTATE}': obj[i]['linkState'],\n        '{#FREQUENCY}': obj[i]['frequency'],\n        '{#CAPACITYUL}': obj[i]['capacityUl'],\n        '{#CAPACITYDL}': obj[i]['capacityDl']\n    });\n}\nreturn JSON.stringify(lld);"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$API_FUNCT_DEVICE}",
+                        "value": "get.device"
+                    },
+                    {
+                        "macro": "{$API_FUNCT_GPS}",
+                        "value": "get.gps"
+                    },
+                    {
+                        "macro": "{$API_FUNCT_INTERFACES}",
+                        "value": "get.interfaces"
+                    },
+                    {
+                        "macro": "{$API_FUNCT_STATISTICS}",
+                        "value": "get.statistics"
+                    },
+                    {
+                        "macro": "{$API_FUNCT_WSTATISTICS}",
+                        "value": "get.wireless.statistics"
+                    },
+                    {
+                        "macro": "{$WAVEPRO_API_URL}",
+                        "value": "https:/localhost/v1/api.php"
+                    },
+                    {
+                        "macro": "{$WAVEPRO_PASS}",
+                        "value": ""
+                    },
+                    {
+                        "macro": "{$WAVEPRO_USER}",
+                        "value": ""
+                    }
+                ],
+                "dashboards": [
+                    {
+                        "uuid": "1b8ceee68b704eb4b91bae79ec2de827",
+                        "name": "Dashboard",
+                        "pages": [
+                            {
+                                "widgets": [
+                                    {
+                                        "type": "graphprototype",
+                                        "width": "24",
+                                        "height": "5",
+                                        "fields": [
+                                            {
+                                                "type": "GRAPH_PROTOTYPE",
+                                                "name": "graphid",
+                                                "value": {
+                                                    "host": "CT WavePro  API",
+                                                    "name": "Link Capacity for {#TITLE}"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "graphprototype",
+                                        "y": "5",
+                                        "width": "24",
+                                        "height": "5",
+                                        "fields": [
+                                            {
+                                                "type": "GRAPH_PROTOTYPE",
+                                                "name": "graphid",
+                                                "value": {
+                                                    "host": "CT WavePro  API",
+                                                    "name": "{#ID} - {#NAME} Throughput"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "valuemaps": [
+                    {
+                        "uuid": "d858a19862654883be907693fa514ae1",
+                        "name": "Network Interface Types",
+                        "mappings": [
+                            {
+                                "value": "1",
+                                "newvalue": "other"
+                            },
+                            {
+                                "value": "6",
+                                "newvalue": "ethernetCsmacd"
+                            },
+                            {
+                                "value": "71",
+                                "newvalue": "ieee80211"
+                            },
+                            {
+                                "value": "23",
+                                "newvalue": "ppp"
+                            },
+                            {
+                                "value": "24",
+                                "newvalue": "softwareLoopback"
+                            },
+                            {
+                                "value": "84",
+                                "newvalue": "async"
+                            },
+                            {
+                                "value": "108",
+                                "newvalue": "pppMultilinkBundle"
+                            },
+                            {
+                                "value": "150",
+                                "newvalue": "mplsTunnel"
+                            },
+                            {
+                                "value": "161",
+                                "newvalue": "ieee8023adLag"
+                            },
+                            {
+                                "value": "136",
+                                "newvalue": "l3ipvlan"
+                            }
+                        ]
+                    },
+                    {
+                        "uuid": "36ff31b1862c4d2d966cef5e368653b3",
+                        "name": "SNMP interface status (ifOperStatus)",
+                        "mappings": [
+                            {
+                                "value": "1",
+                                "newvalue": "up"
+                            },
+                            {
+                                "value": "2",
+                                "newvalue": "down"
+                            },
+                            {
+                                "value": "3",
+                                "newvalue": "testing"
+                            },
+                            {
+                                "value": "4",
+                                "newvalue": "unknown"
+                            },
+                            {
+                                "value": "5",
+                                "newvalue": "dormant"
+                            },
+                            {
+                                "value": "6",
+                                "newvalue": "notPresent"
+                            },
+                            {
+                                "value": "7",
+                                "newvalue": "lowerLayerDown"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
