@@ -153,28 +153,37 @@ class WavePro {
 		}
 		if (!empty($data[0])) {
 			$peers = isset($data[0]['wireless']['peers']) ? $data[0]['wireless']['peers'] : null;
-			if (!empty($peers)) {
+
+			// MAIN
+			if ($peers[0]['local'][0]['connected'] == true) {
 				$data[0]['wireless']['radios'][0]['connected'] 	= $peers[0]['local'][0]['connected'];
 				$data[0]['wireless']['radios'][0]['active'] 	= $peers[0]['local'][0]['active'];
 				$data[0]['wireless']['radios'][0]['rxSignal'] 	= $peers[0]['local'][0]['linkQuality']['signal'];
 				$data[0]['wireless']['radios'][0]['txSignal'] 	= $peers[0]['remote'][0]['linkQuality']['signal'];
+			} else {
+				$data[0]['wireless']['radios'][0]['connected'] 	= $peers[0]['local'][0]['connected'];
+				$data[0]['wireless']['radios'][0]['active']		= false;
+				$data[0]['wireless']['radios'][0]['rxSignal']	= 0;
+				$data[0]['wireless']['radios'][0]['txSignal']	= 0;
+				$data[0]['wireless']['radios'][0]['linkQuality']['capacity']['ul'] = 0;
+				$data[0]['wireless']['radios'][0]['linkQuality']['capacity']['dl'] = 0;
+			}
 
+			// BACKUP
+			if ($peers[0]['local'][1]['connected'] == true) {
 				$data[0]['wireless']['radios'][1]['connected'] 	= $peers[0]['local'][1]['connected'];
 				$data[0]['wireless']['radios'][1]['active'] 	= $peers[0]['local'][1]['active'];
 				$data[0]['wireless']['radios'][1]['rxSignal'] 	= $peers[0]['local'][1]['linkQuality']['signal'];
 				$data[0]['wireless']['radios'][1]['txSignal'] 	= $peers[0]['remote'][1]['linkQuality']['signal'];
 				$data[0]['wireless']['radios'][1]['noiseFloor'] = $peers[0]['remote'][1]['linkQuality']['noiseFloor'];
 			} else {
-				$data[0]['wireless']['radios'][0]['connected'] 	= null;
-				$data[0]['wireless']['radios'][0]['active']		= null;
-				$data[0]['wireless']['radios'][0]['rxSignal']	= null;
-				$data[0]['wireless']['radios'][0]['txSignal']	= null;
-
-				$data[0]['wireless']['radios'][1]['connected']	= null;
-				$data[0]['wireless']['radios'][1]['active']		= null;
-				$data[0]['wireless']['radios'][1]['rxSignal']	= null;
-				$data[0]['wireless']['radios'][1]['txSignal']	= null;
-				$data[0]['wireless']['radios'][1]['noiseFloor']	= null;				
+				$data[0]['wireless']['radios'][1]['connected']	= $peers[0]['local'][1]['connected'];
+				$data[0]['wireless']['radios'][1]['active']		= false;
+				$data[0]['wireless']['radios'][1]['rxSignal']	= 0;
+				$data[0]['wireless']['radios'][1]['txSignal']	= 0;
+				$data[0]['wireless']['radios'][1]['noiseFloor']	= 0;
+				$data[0]['wireless']['radios'][1]['linkQuality']['capacity']['ul'] = 0;
+				$data[0]['wireless']['radios'][1]['linkQuality']['capacity']['dl'] = 0;		
 			}
 			
 			$dataset = array(
